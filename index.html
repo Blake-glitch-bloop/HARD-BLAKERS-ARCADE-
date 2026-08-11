@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#09051b" />
+    <meta
+      name="description"
+      content="Brandon's neon claw machine picks the next task so you don't have to."
+    />
+    <title>Task Grabber — Brandon's Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Nunito:wght@700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Task Grabber home">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <span>Brandon's Arcade</span>
+      </a>
+      <div class="status-pill"><span></span> Machine online</div>
+    </header>
+
+    <main id="top">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="eyebrow"><span>◆</span> Decision mode: easy</div>
+        <h1 id="page-title">Can't decide?<br /><em>Let the claw choose.</em></h1>
+        <p>
+          Drop the claw, grab a capsule, and get one clear thing to work on.
+          No overthinking. Just play, pick, and begin.
+        </p>
+        <a class="jump-link" href="#machine">Play the machine <span aria-hidden="true">↓</span></a>
+      </section>
+
+      <section class="game-section" id="machine" aria-label="Task claw machine">
+        <div class="side-copy" aria-hidden="true">
+          <span>Grab</span><strong>a task</strong><span>Get</span><strong>it done</strong>
+        </div>
+
+        <div class="machine-wrap">
+          <div class="machine-top">
+            <div class="marquee-bulbs" aria-hidden="true"></div>
+            <div class="machine-title"><small>Brandon's</small>Task Grabber</div>
+            <div class="marquee-bulbs bottom" aria-hidden="true"></div>
+          </div>
+
+          <div class="machine-body">
+            <div class="game-info">
+              <span>Prize bay</span>
+              <span class="plays"><b id="plays">0</b> tasks grabbed</span>
+            </div>
+
+            <div class="glass" id="glass">
+              <div class="scanlines" aria-hidden="true"></div>
+              <div class="claw-track" aria-hidden="true"></div>
+              <div class="claw" id="claw" aria-hidden="true">
+                <div class="cable"></div>
+                <div class="claw-head"><i></i></div>
+                <div class="claw-arm left"></div>
+                <div class="claw-arm right"></div>
+              </div>
+              <div class="capsules" id="capsules" aria-hidden="true"></div>
+              <div class="glass-message" id="glassMessage" aria-live="polite">
+                <span>Ready, Brandon?</span>
+                Position the claw and hit DROP
+              </div>
+            </div>
+
+            <div class="controls-panel">
+              <div class="joystick-area">
+                <button class="arrow-btn" id="leftBtn" aria-label="Move claw left">←</button>
+                <div class="joystick" aria-hidden="true"><span></span><i></i></div>
+                <button class="arrow-btn" id="rightBtn" aria-label="Move claw right">→</button>
+              </div>
+              <div class="control-instructions">
+                <strong>Move &amp; grab</strong>
+                <span>Use arrows or A / D</span>
+              </div>
+              <button class="drop-btn" id="dropBtn">
+                <span>Drop</span>
+                <small>Spacebar</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="machine-base">
+            <div class="prize-slot"><span></span><b>Task exit</b></div>
+            <div class="coin-slot"><i></i><span>Free play</span></div>
+          </div>
+        </div>
+
+        <div class="tip-card">
+          <span aria-hidden="true">✦</span>
+          <p><strong>How to play</strong> Move the claw, then press DROP. Whatever you grab is your next mission.</p>
+        </div>
+      </section>
+
+      <section class="task-result" id="taskResult" aria-live="polite" aria-hidden="true">
+        <div class="ticket-cut left"></div><div class="ticket-cut right"></div>
+        <div class="result-icon">✓</div>
+        <div class="result-copy">
+          <span>The claw has spoken</span>
+          <h2 id="chosenTask">Start the task</h2>
+          <p>One thing at a time. You've got this, Brandon.</p>
+        </div>
+        <div class="result-actions">
+          <button id="doneBtn" class="primary-btn">Mark it done</button>
+          <button id="againBtn" class="text-btn">Grab another ↻</button>
+        </div>
+      </section>
+
+      <section class="customize" aria-labelledby="customize-title">
+        <div>
+          <div class="eyebrow"><span>+</span> Load the machine</div>
+          <h2 id="customize-title">Make the prizes yours.</h2>
+          <p>Add something Brandon needs to do. It goes straight into the task pool for the next grab.</p>
+        </div>
+        <form id="taskForm" class="task-form">
+          <label for="taskInput">New task</label>
+          <div>
+            <input id="taskInput" maxlength="80" placeholder="e.g. Reply to that email" autocomplete="off" required />
+            <button type="submit">Add task <span aria-hidden="true">＋</span></button>
+          </div>
+          <p id="taskCount">8 tasks loaded</p>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <span>BRANDON'S ARCADE © 2026</span>
+      <span>Built for fewer decisions &amp; more doing.</span>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
