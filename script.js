@@ -1,4 +1,31 @@
 const defaultTasks = [
+  "Take out the kitchen trash and put a new bag in the bin",
+  "Wash every dish that is currently in the sink",
+  "Put all dirty clothes on the floor into the laundry basket",
+  "Make your bed and put the pillows back in place",
+  "Wipe down the bathroom sink and mirror",
+  "Pick up and put away 10 items from your bedroom floor",
+  "Vacuum or sweep the floor in your bedroom",
+  "Fold and put away 5 pieces of clean laundry",
+  "Clean the toilet bowl and wipe down the seat",
+  "Throw away any empty cups, cans, or wrappers in your room",
+  "Fill your water bottle and drink one full glass of water",
+  "Brush your teeth for 2 minutes",
+  "Take a shower and put on clean clothes",
+  "Walk outside for 10 minutes without using your phone",
+  "Do 10 squats, 10 arm circles, and a 30-second stretch",
+  "Open your inbox and reply to the oldest unanswered message",
+  "Set a 15-minute timer and work on the assignment due soonest",
+  "Clear your desk except for the items needed for your next task",
+  "Read 5 pages of the book you are currently reading",
+  "Check tomorrow's calendar and set an alarm for the earliest event",
+  "Plug in your phone and laptop so they are charged",
+  "Delete 10 screenshots or blurry photos from your phone",
+  "Put tomorrow's clothes together and leave them by your bed",
+  "Write the first thing you need to do tomorrow on a sticky note"
+];
+
+const oldDefaultTasks = [
   "Reply to the most important email",
   "Work for 20 minutes with no distractions",
   "Tidy your workspace",
@@ -8,9 +35,13 @@ const defaultTasks = [
   "Start the hardest task for just 5 minutes",
   "Organize one messy folder"
 ];
-
 const savedTasks = JSON.parse(localStorage.getItem("brandon-tasks") || "null");
-const tasks = Array.isArray(savedTasks) && savedTasks.length ? savedTasks : [...defaultTasks];
+const customTasks = Array.isArray(savedTasks)
+  ? savedTasks.filter((task) => !oldDefaultTasks.includes(task) && !defaultTasks.includes(task))
+  : [];
+const tasks = [...defaultTasks, ...customTasks];
+
+localStorage.setItem("brandon-tasks", JSON.stringify(tasks));
 let clawPosition = 50;
 let isPlaying = false;
 let playCount = Number(localStorage.getItem("brandon-plays") || 0);
