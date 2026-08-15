@@ -117,6 +117,21 @@
         </div>
       </section>
 
+      <section class="quote-collection" id="quoteCollection" aria-labelledby="quotes-title" hidden>
+        <div class="collection-heading">
+          <div>
+            <div class="eyebrow"><span>★</span> Brandon's prize shelf</div>
+            <h2 id="quotes-title">Motivation collected.</h2>
+            <p>Every finished task unlocks another quote. Keep going to collect them all.</p>
+          </div>
+          <div class="collection-progress">
+            <strong id="quoteProgress">0 / 18</strong>
+            <span>quotes unlocked</span>
+          </div>
+        </div>
+        <div class="quote-grid" id="quoteGrid"></div>
+      </section>
+
       <section class="customize" aria-labelledby="customize-title">
         <div>
           <div class="eyebrow"><span>+</span> Load the machine</div>
@@ -140,6 +155,21 @@
     </footer>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="reward-overlay" id="rewardOverlay" aria-hidden="true">
+      <div class="reward-card" role="dialog" aria-modal="true" aria-labelledby="rewardTitle" aria-describedby="rewardQuote">
+        <div class="reward-rays" aria-hidden="true"></div>
+        <span class="reward-kicker">Task complete · Quote unlocked</span>
+        <div class="reward-star" aria-hidden="true">★</div>
+        <h2 id="rewardTitle">Prize earned!</h2>
+        <blockquote id="rewardQuote"></blockquote>
+        <p id="rewardNumber"></p>
+        <div class="reward-buttons">
+          <button class="primary-btn" id="closeRewardBtn">See my collection</button>
+          <button class="text-btn" id="nextTaskBtn">Grab another task</button>
+        </div>
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
