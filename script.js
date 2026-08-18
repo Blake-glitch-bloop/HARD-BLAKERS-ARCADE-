@@ -46,6 +46,34 @@ const motivationalQuotes = [
   "Brandon, you got it done. That is worth celebrating."
 ];
 
+const clawShop = [
+  { id: "standard", name: "Standard Claw", price: 0, description: "The original arcade claw. Always included." },
+  { id: "silver", name: "Silver Claw", price: 150, description: "A polished steel finish for clean grabs." },
+  { id: "gold", name: "Golden Claw", price: 300, description: "A bright gold finish made for winners." },
+  { id: "chrono", name: "Chrono Claw", price: 600, description: "A neon clockwork claw from the future." },
+  { id: "time", name: "Time-Bending Claw", price: 750, description: "Special power: grabs two tasks in one round.", doubleGrab: true },
+  { id: "glo", name: "Glo-Claw", price: null, description: "Day-seven exclusive. Glows and grabs two tasks.", doubleGrab: true, exclusive: true }
+];
+
+const dailyRewards = [
+  { label: "50P", icon: "●" },
+  { label: "100P", icon: "●" },
+  { label: "150P", icon: "●" },
+  { label: "200P", icon: "●" },
+  { label: "225P", icon: "●" },
+  { label: "250P", icon: "●" },
+  { label: "Glo-Claw", icon: "★" }
+];
+
+function readStorage(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 const oldDefaultTasks = [
   "Reply to the most important email",
   "Work for 20 minutes with no distractions",
@@ -56,7 +84,7 @@ const oldDefaultTasks = [
   "Start the hardest task for just 5 minutes",
   "Organize one messy folder"
 ];
-const savedTasks = JSON.parse(localStorage.getItem("brandon-tasks") || "null");
+const savedTasks = readStorage("brandon-tasks", null);
 const customTasks = Array.isArray(savedTasks)
   ? savedTasks.filter((task) => !oldDefaultTasks.includes(task) && !defaultTasks.includes(task))
   : [];
@@ -67,10 +95,19 @@ let clawPosition = 50;
 let isPlaying = false;
 let currentTaskCompleted = false;
 let playCount = Number(localStorage.getItem("brandon-plays") || 0);
-let unlockedQuotes = JSON.parse(localStorage.getItem("brandon-quotes") || "[]");
+let points = Math.max(0, Number(localStorage.getItem("brandon-points") || 0));
+let ownedClaws = readStorage("brandon-owned-claws", ["standard"]);
+let activeClaw = localStorage.getItem("brandon-active-claw") || "standard";
+let currentRoundTasks = [];
+let activeTaskIndex = 0;
+let rewardHasNextTask = false;
+let unlockedQuotes = readStorage("brandon-quotes", []);
 
 if (!Array.isArray(unlockedQuotes)) unlockedQuotes = [];
 unlockedQuotes = [...new Set(unlockedQuotes)].filter((index) => motivationalQuotes[index]);
+if (!Array.isArray(ownedClaws)) ownedClaws = ["standard"];
+ownedClaws = [...new Set(["standard", ...ownedClaws])];
+if (!ownedClaws.includes(activeClaw)) activeClaw = "standard";
 
 const claw = document.querySelector("#claw");
 const capsules = document.querySelector("#capsules");
@@ -87,6 +124,17 @@ const quoteProgress = document.querySelector("#quoteProgress");
 const rewardOverlay = document.querySelector("#rewardOverlay");
 const rewardQuote = document.querySelector("#rewardQuote");
 const rewardNumber = document.querySelector("#rewardNumber");
+const pointsBalance = document.querySelector("#pointsBalance");
+const shelfPoints = document.querySelector("#shelfPoints");
+const streakCount = document.querySelector("#streakCount");
+const dailyTrack = document.querySelector("#dailyTrack");
+const dailyStatus = document.querySelector("#dailyStatus");
+const clawGrid = document.querySelector("#clawGrid");
+const activeClawLabel = document.querySelector("#activeClawLabel");
+const queuedTask = document.querySelector("#queuedTask");
+const secondTask = document.querySelector("#secondTask");
+const taskOrder = document.querySelector("#taskOrder");
+const taskProgress = document.querySelector("#taskProgress");
 
 plays.textContent = playCount;
 
@@ -120,6 +168,133 @@ function showToast(message) {
   showToast.timeout = setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+function saveEconomy() {
+  localStorage.setItem("brandon-points", String(points));
+  localStorage.setItem("brandon-owned-claws", JSON.stringify(ownedClaws));
+  localStorage.setItem("brandon-active-claw", activeClaw);
+}
+
+function updatePoints() {
+  pointsBalance.textContent = points;
+  shelfPoints.textContent = points;
+  renderClawShelf();
+}
+
+function addPoints(amount) {
+  points += amount;
+  saveEconomy();
+  updatePoints();
+}
+
+function getClawDetails(id) {
+  return clawShop.find((item) => item.id === id) || { id: "standard", name: "Standard Claw" };
+}
+
+function applyActiveClaw() {
+  claw.className = `claw${activeClaw === "standard" ? "" : ` skin-${activeClaw}`}`;
+  activeClawLabel.textContent = getClawDetails(activeClaw).name;
+}
+
+function renderClawShelf() {
+  if (!clawGrid) return;
+  clawGrid.innerHTML = clawShop.map((item) => {
+    const owned = ownedClaws.includes(item.id);
+    const equipped = activeClaw === item.id;
+    const canAfford = item.price !== null && points >= item.price;
+    let buttonText = item.exclusive && !owned ? "Day 7 reward" : `${item.price}P · Buy`;
+    if (owned) buttonText = equipped ? "Equipped ✓" : "Equip claw";
+    return `
+      <article class="shop-card${equipped ? " equipped" : ""}${item.exclusive ? " exclusive" : ""}">
+        <div class="mini-claw ${item.id}" aria-hidden="true"></div>
+        <h3>${item.name}</h3>
+        <span class="price">${item.exclusive ? "Streak exclusive" : `${item.price} points`}</span>
+        <p>${item.description}</p>
+        <button data-claw-id="${item.id}" ${(!owned && (!canAfford || item.exclusive)) ? "disabled" : ""}>${buttonText}</button>
+      </article>`;
+  }).join("");
+}
+
+function handleClawShelfClick(event) {
+  const button = event.target.closest("button[data-claw-id]");
+  if (!button) return;
+  const item = clawShop.find((clawItem) => clawItem.id === button.dataset.clawId);
+  if (!item) return;
+  if (ownedClaws.includes(item.id)) {
+    activeClaw = item.id;
+    saveEconomy();
+    applyActiveClaw();
+    renderClawShelf();
+    showToast(`${item.name} equipped!`);
+    return;
+  }
+  if (item.price === null || points < item.price) return;
+  points -= item.price;
+  ownedClaws.push(item.id);
+  activeClaw = item.id;
+  saveEconomy();
+  updatePoints();
+  applyActiveClaw();
+  showToast(`${item.name} purchased and equipped!`);
+}
+
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function dateKeyToUtc(key) {
+  const [year, month, day] = key.split("-").map(Number);
+  return Date.UTC(year, month - 1, day);
+}
+
+function renderDailyTrack(streakDay) {
+  dailyTrack.innerHTML = dailyRewards.map((reward, index) => {
+    const day = index + 1;
+    const state = day === streakDay ? "claimed" : day < streakDay ? "passed" : "";
+    return `
+      <div class="day-reward ${state}${day === 7 ? " grand" : ""}">
+        <small>Day ${day}</small><span aria-hidden="true">${reward.icon}</span><strong>${reward.label}</strong>
+      </div>`;
+  }).join("");
+}
+
+function claimDailyBonus() {
+  const today = localDateKey();
+  const lastClaim = localStorage.getItem("brandon-last-daily-claim");
+  let streakDay = Math.min(7, Math.max(0, Number(localStorage.getItem("brandon-daily-streak") || 0)));
+  let claimedNow = false;
+
+  if (lastClaim !== today) {
+    const gap = lastClaim ? Math.round((dateKeyToUtc(today) - dateKeyToUtc(lastClaim)) / 86400000) : null;
+    streakDay = gap === 1 ? (streakDay >= 7 ? 1 : streakDay + 1) : 1;
+    localStorage.setItem("brandon-last-daily-claim", today);
+    localStorage.setItem("brandon-daily-streak", String(streakDay));
+    claimedNow = true;
+
+    if (streakDay === 7) {
+      if (!ownedClaws.includes("glo")) ownedClaws.push("glo");
+      saveEconomy();
+    } else {
+      addPoints([50, 100, 150, 200, 225, 250][streakDay - 1]);
+    }
+  }
+
+  streakCount.textContent = streakDay;
+  renderDailyTrack(streakDay);
+  if (streakDay === 7) {
+    dailyStatus.textContent = "Day 7 complete! The exclusive two-task Glo-Claw is now on your shelf.";
+  } else {
+    dailyStatus.textContent = `Day ${streakDay} collected. Return tomorrow for ${dailyRewards[streakDay].label}; miss a day and the streak resets.`;
+  }
+  if (claimedNow) {
+    const message = streakDay === 7 ? "Daily bonus: Glo-Claw unlocked!" : `Daily bonus: +${dailyRewards[streakDay - 1].label}`;
+    setTimeout(() => showToast(message), 350);
+  }
+  updatePoints();
+}
+
 function renderQuoteCollection() {
   quoteCollection.hidden = unlockedQuotes.length === 0;
   quoteProgress.textContent = `${unlockedQuotes.length} / ${motivationalQuotes.length}`;
@@ -131,7 +306,7 @@ function renderQuoteCollection() {
   `).join("");
 }
 
-function unlockMotivationalQuote() {
+function unlockMotivationalQuote(hasNextTask = false) {
   const lockedQuotes = motivationalQuotes
     .map((_, index) => index)
     .filter((index) => !unlockedQuotes.includes(index));
@@ -148,6 +323,9 @@ function unlockMotivationalQuote() {
   rewardNumber.textContent = lockedQuotes.length
     ? `Quote ${unlockedQuotes.length} of ${motivationalQuotes.length} collected`
     : "Collection complete - bonus quote replay";
+  rewardHasNextTask = hasNextTask;
+  document.querySelector("#closeRewardBtn").textContent = hasNextTask ? "Start task 2" : "See my collection";
+  document.querySelector("#nextTaskBtn").textContent = hasNextTask ? "See quote collection" : "Grab another task";
   renderQuoteCollection();
   rewardOverlay.classList.add("open");
   rewardOverlay.setAttribute("aria-hidden", "false");
@@ -160,6 +338,20 @@ function closeReward(showCollection = true) {
   if (showCollection) {
     setTimeout(() => quoteCollection.scrollIntoView({ behavior: "smooth", block: "center" }), 200);
   }
+}
+
+function displayCurrentTask() {
+  const totalTasks = currentRoundTasks.length;
+  chosenTask.textContent = currentRoundTasks[activeTaskIndex] || "Start the task";
+  taskOrder.textContent = totalTasks > 1 ? `Double grab · Task ${activeTaskIndex + 1} of ${totalTasks}` : "The claw has spoken";
+  const hasQueuedTask = totalTasks > 1 && activeTaskIndex === 0;
+  queuedTask.hidden = !hasQueuedTask;
+  if (hasQueuedTask) secondTask.textContent = currentRoundTasks[1];
+  taskProgress.textContent = totalTasks > 1
+    ? `Finish task ${activeTaskIndex + 1} to earn 50 points${activeTaskIndex === 0 ? ", then do task 2." : "."}`
+    : "Complete it to earn 50 points.";
+  currentTaskCompleted = false;
+  document.querySelector("#doneBtn").textContent = `Finish task${totalTasks > 1 ? ` ${activeTaskIndex + 1}` : ""} · +50P`;
 }
 
 function dropClaw() {
@@ -175,15 +367,21 @@ function dropClaw() {
     const allCapsules = [...document.querySelectorAll(".capsule")];
     const capsuleIndex = Math.min(allCapsules.length - 1, Math.floor((clawPosition / 100) * allCapsules.length));
     allCapsules[capsuleIndex]?.classList.add("grabbed");
+    if (getClawDetails(activeClaw).doubleGrab) allCapsules[(capsuleIndex + 1) % allCapsules.length]?.classList.add("grabbed");
   }, 760);
 
   setTimeout(() => claw.classList.remove("dropping"), 1150);
 
   setTimeout(() => {
     const taskIndex = Math.floor((clawPosition / 100) * tasks.length + Math.random() * tasks.length) % tasks.length;
-    chosenTask.textContent = tasks[taskIndex];
-    currentTaskCompleted = false;
-    document.querySelector("#doneBtn").textContent = "Mark it done";
+    currentRoundTasks = [tasks[taskIndex]];
+    if (getClawDetails(activeClaw).doubleGrab && tasks.length > 1) {
+      let secondIndex = Math.floor(Math.random() * tasks.length);
+      if (secondIndex === taskIndex) secondIndex = (secondIndex + 1) % tasks.length;
+      currentRoundTasks.push(tasks[secondIndex]);
+    }
+    activeTaskIndex = 0;
+    displayCurrentTask();
     playCount += 1;
     plays.textContent = playCount;
     localStorage.setItem("brandon-plays", playCount);
@@ -210,23 +408,36 @@ document.querySelector("#doneBtn").addEventListener("click", () => {
     return;
   }
   currentTaskCompleted = true;
-  document.querySelector("#doneBtn").textContent = "Completed! ✓";
-  unlockMotivationalQuote();
+  addPoints(50);
+  document.querySelector("#doneBtn").textContent = "Completed! +50P ✓";
+  const hasNextTask = activeTaskIndex < currentRoundTasks.length - 1;
+  if (hasNextTask) {
+    activeTaskIndex += 1;
+    displayCurrentTask();
+  }
+  unlockMotivationalQuote(hasNextTask);
 });
-document.querySelector("#closeRewardBtn").addEventListener("click", () => closeReward(true));
+document.querySelector("#closeRewardBtn").addEventListener("click", () => {
+  closeReward(!rewardHasNextTask);
+  if (rewardHasNextTask) setTimeout(() => taskResult.scrollIntoView({ behavior: "smooth", block: "center" }), 200);
+});
 document.querySelector("#nextTaskBtn").addEventListener("click", () => {
+  if (rewardHasNextTask) {
+    closeReward(true);
+    return;
+  }
   closeReward(false);
   taskResult.setAttribute("aria-hidden", "true");
   document.querySelector("#machine").scrollIntoView({ behavior: "smooth", block: "center" });
   setTimeout(dropClaw, 450);
 });
 rewardOverlay.addEventListener("click", (event) => {
-  if (event.target === rewardOverlay) closeReward(true);
+  if (event.target === rewardOverlay) closeReward(!rewardHasNextTask);
 });
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && rewardOverlay.classList.contains("open")) {
-    closeReward(true);
+    closeReward(!rewardHasNextTask);
     return;
   }
   if (document.activeElement.tagName === "INPUT") return;
@@ -250,6 +461,11 @@ document.querySelector("#taskForm").addEventListener("submit", (event) => {
   showToast("Task loaded into the machine!");
 });
 
+clawGrid.addEventListener("click", handleClawShelfClick);
+
 taskCount.textContent = `${tasks.length} tasks loaded`;
 drawCapsules();
 renderQuoteCollection();
+applyActiveClaw();
+updatePoints();
+claimDailyBonus();

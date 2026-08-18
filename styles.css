@@ -38,8 +38,11 @@ button { cursor: pointer; }
 }
 .brand { display: flex; align-items: center; gap: 11px; color: white; text-decoration: none; font-weight: 900; letter-spacing: -.02em; text-transform: uppercase; }
 .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; color: #0a051b; background: var(--yellow); border: 3px solid #fff; border-radius: 8px; box-shadow: 4px 4px 0 var(--pink); transform: rotate(-4deg); }
-.status-pill { border: 1px solid #3d3455; background: #120c27; border-radius: 999px; padding: 8px 13px; color: var(--muted); font: 500 11px "DM Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
-.status-pill span { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #54f58b; box-shadow: 0 0 9px #54f58b; }
+.header-stats { display: flex; gap: 8px; }
+.stat-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #3d3455; background: #120c27; border-radius: 999px; padding: 9px 13px; color: var(--muted); text-decoration: none; font: 500 10px "DM Mono", monospace; text-transform: uppercase; letter-spacing: .05em; }
+.stat-pill b { color: white; }
+.points-pill span { color: var(--yellow); text-shadow: 0 0 8px var(--yellow); }
+.streak-pill span { color: var(--pink); text-shadow: 0 0 8px var(--pink); }
 
 main { max-width: 1180px; margin: 0 auto; padding: 0 30px; }
 .intro { text-align: center; padding: 68px 0 60px; }
@@ -49,6 +52,20 @@ h1 { margin: 20px 0 18px; font-size: clamp(46px, 7vw, 88px); line-height: .96; l
 h1 em { color: var(--pink); font-style: normal; text-shadow: 0 0 28px rgba(255,63,172,.35); }
 .intro > p { max-width: 590px; margin: 0 auto; color: var(--muted); font-size: 18px; line-height: 1.65; }
 .jump-link { display: inline-flex; gap: 9px; align-items: center; margin-top: 30px; color: white; text-decoration: none; font-size: 14px; border-bottom: 2px solid var(--cyan); padding-bottom: 4px; }
+
+.daily-bonus { margin: 0 0 90px; padding: 26px 28px; display: grid; grid-template-columns: 280px 1fr; align-items: center; gap: 30px; background: linear-gradient(110deg, #17102f, #241344); border: 1px solid #443460; border-radius: 18px; box-shadow: 7px 8px 0 rgba(0,0,0,.2); }
+.daily-copy h2 { margin: 8px 0 5px; font-size: 24px; letter-spacing: -.03em; }
+.daily-copy p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.daily-track { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+.day-reward { position: relative; min-height: 86px; padding: 11px 5px 8px; display: grid; place-items: center; align-content: center; gap: 4px; color: #84799d; background: #0d0821; border: 1px solid #33294a; border-radius: 9px; text-align: center; }
+.day-reward small { font: 8px "DM Mono", monospace; text-transform: uppercase; }
+.day-reward strong { color: #c3bad6; font-size: 13px; }
+.day-reward span { font-size: 19px; filter: grayscale(1); opacity: .5; }
+.day-reward.passed { color: #a99fc1; border-color: #51446d; }
+.day-reward.claimed { color: #291636; background: var(--yellow); border-color: #fff5a4; box-shadow: 0 0 20px rgba(255,225,77,.25); transform: translateY(-4px); }
+.day-reward.claimed strong, .day-reward.claimed small { color: #291636; }
+.day-reward.claimed span { filter: none; opacity: 1; }
+.day-reward.grand { border-color: #4f3b78; }
 
 .game-section { position: relative; min-height: 860px; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; }
 .side-copy { position: absolute; left: 0; top: 235px; display: grid; text-transform: uppercase; transform: rotate(-6deg); }
@@ -78,6 +95,19 @@ h1 em { color: var(--pink); font-style: normal; text-shadow: 0 0 28px rgba(255,6
 .claw.grabbing .claw-arm.left { transform: rotate(7deg); }
 .claw.grabbing .claw-arm.right { transform: rotate(-7deg); }
 .claw.dropping { top: 205px; }
+.claw.skin-silver .claw-head { background: linear-gradient(135deg,#fff,#9aa5b4 55%,#e8edf3); box-shadow: 0 0 12px #cdd8e7; }
+.claw.skin-silver .claw-arm { border-color: #dce5ef; }
+.claw.skin-gold .claw-head { background: linear-gradient(135deg,#fff7a7,#f6b921 55%,#fff073); box-shadow: 0 0 15px #ffd94f; }
+.claw.skin-gold .claw-arm { border-color: #ffd24b; }
+.claw.skin-chrono .claw-head { background: linear-gradient(135deg,#48fbff,#7b4dff); box-shadow: 0 0 16px #20e5ef; }
+.claw.skin-chrono .claw-head i { background: #fff; box-shadow: 0 0 10px #fff; }
+.claw.skin-chrono .claw-arm { border-color: #48fbff; }
+.claw.skin-time .claw-head { background: linear-gradient(135deg,#ff3fac,#8d56ff,#20e5ef); box-shadow: 0 0 19px #ff3fac; animation: timePulse 1.5s alternate infinite; }
+.claw.skin-time .claw-arm { border-color: #e0a5ff; }
+.claw.skin-glo .claw-head { background: linear-gradient(135deg,#efffc0,#57ff91); box-shadow: 0 0 25px #57ff91, 0 0 45px rgba(87,255,145,.55); }
+.claw.skin-glo .claw-head i { background: #fff; box-shadow: 0 0 12px #fff; }
+.claw.skin-glo .claw-arm { border-color: #82ffa9; filter: drop-shadow(0 0 5px #57ff91); }
+@keyframes timePulse { to { filter: hue-rotate(70deg); transform: scale(1.08); } }
 
 .capsule { position: absolute; width: 74px; height: 62px; border: 4px solid #0c0921; border-radius: 38px; transform: rotate(var(--r)); background: linear-gradient(to bottom, var(--cap) 0 47%, #f1effe 48% 100%); box-shadow: inset 5px 4px 0 rgba(255,255,255,.22), 4px 5px 0 rgba(0,0,0,.2); transition: transform .35s, opacity .35s; }
 .capsule::after { content: "?"; position: absolute; display: grid; place-items: center; left: 24px; top: 13px; width: 22px; height: 22px; background: var(--yellow); color: #201336; border: 2px solid #201336; border-radius: 50%; font-size: 14px; font-weight: 900; }
@@ -118,10 +148,38 @@ h1 em { color: var(--pink); font-style: normal; text-shadow: 0 0 28px rgba(255,6
 .result-icon { display: grid; place-items: center; width: 58px; height: 58px; color: white; background: var(--pink); border: 4px solid #2a1435; border-radius: 50%; font-size: 29px; box-shadow: 4px 4px 0 #7e4b1d; }
 .result-copy > span { font: 500 9px "DM Mono", monospace; text-transform: uppercase; letter-spacing: .14em; }
 .result-copy h2 { margin: 4px 0; font-size: clamp(22px, 4vw, 32px); letter-spacing: -.03em; }
-.result-copy p { margin: 0; font-size: 12px; }
+.result-copy p { margin: 5px 0 0; font-size: 12px; }
+.queued-task { margin: 10px 0 3px; padding: 8px 10px; color: #58396a; background: rgba(255,255,255,.35); border: 1px dashed rgba(55,27,64,.3); border-radius: 6px; font: 9px "DM Mono", monospace; text-transform: uppercase; }
+.queued-task strong { display: block; margin-top: 2px; color: #291636; font: 800 12px "Nunito", sans-serif; text-transform: none; }
 .result-actions { display: grid; gap: 7px; }
 .primary-btn { padding: 12px 18px; color: white; background: #231039; border: 0; border-radius: 6px; box-shadow: 0 4px 0 #be7e27; font-weight: 900; }
 .text-btn { color: #3d2050; background: none; border: 0; font-size: 11px; }
+
+.claw-shelf { margin: 5px 0 100px; padding: 48px; background: linear-gradient(145deg,#17102f,#24143d); border: 1px solid #44345f; border-radius: 22px; }
+.shelf-heading { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 28px; }
+.shelf-heading h2 { margin: 12px 0 5px; font-size: clamp(30px,4vw,46px); letter-spacing: -.04em; }
+.shelf-heading p { margin: 0; color: var(--muted); }
+.shelf-wallet { min-width: 130px; padding: 13px 17px; text-align: center; background: #0b071c; border: 1px solid #4b3a69; border-radius: 10px; }
+.shelf-wallet span { display: block; color: var(--muted); font: 8px "DM Mono", monospace; text-transform: uppercase; }
+.shelf-wallet strong { color: var(--yellow); font: 500 22px "DM Mono", monospace; }
+.claw-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.shop-card { position: relative; min-width: 0; padding: 20px 13px 15px; display: grid; grid-template-rows: 78px auto auto 1fr auto; gap: 5px; background: #0e0922; border: 1px solid #3e3159; border-radius: 12px; overflow: hidden; }
+.shop-card.equipped { border-color: var(--cyan); box-shadow: inset 0 0 20px rgba(32,229,239,.1), 0 0 15px rgba(32,229,239,.12); }
+.shop-card.exclusive { background: linear-gradient(145deg,rgba(87,255,145,.1),#0e0922); }
+.mini-claw { --metal: #d9dce6; position: relative; width: 54px; height: 70px; margin: 0 auto; }
+.mini-claw::before { content: ""; position: absolute; left: 20px; top: 0; width: 14px; height: 20px; background: var(--metal); border: 2px solid #21182d; border-radius: 5px; box-shadow: var(--mini-glow,none); }
+.mini-claw::after { content: "⌄"; position: absolute; left: 6px; top: 14px; width: 40px; color: var(--metal); font: 900 53px/1 "Nunito",sans-serif; text-align: center; filter: drop-shadow(var(--mini-glow,0 0 transparent)); }
+.mini-claw.silver { --metal: #dfe8f2; --mini-glow: 0 0 7px #dfe8f2; }
+.mini-claw.gold { --metal: #ffd54a; --mini-glow: 0 0 8px #ffd54a; }
+.mini-claw.chrono { --metal: #42e9ff; --mini-glow: 0 0 9px #42e9ff; }
+.mini-claw.time { --metal: #ff5ec0; --mini-glow: 0 0 10px #c064ff; }
+.mini-claw.glo { --metal: #6cff9d; --mini-glow: 0 0 12px #6cff9d; }
+.shop-card h3 { margin: 0; font-size: 15px; }
+.shop-card .price { color: var(--yellow); font: 500 11px "DM Mono",monospace; }
+.shop-card p { margin: 5px 0 12px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.shop-card button { min-height: 38px; padding: 8px; color: #1d1231; background: var(--cyan); border: 0; border-radius: 6px; font-size: 11px; font-weight: 900; }
+.shop-card button:disabled { color: #756b8b; background: #2a2340; cursor: not-allowed; }
+.shop-card.equipped button { color: #241630; background: var(--yellow); }
 
 .quote-collection { margin: 10px 0 100px; padding: 48px; background: #120c29; border: 1px solid #3c3158; border-radius: 22px; }
 .collection-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 30px; }
@@ -145,6 +203,7 @@ h1 em { color: var(--pink); font-style: normal; text-shadow: 0 0 28px rgba(255,6
 .reward-kicker { font: 500 9px "DM Mono", monospace; letter-spacing: .13em; text-transform: uppercase; }
 .reward-star { display: grid; place-items: center; width: 66px; height: 66px; margin: 16px auto 10px; color: var(--yellow); background: var(--pink); border: 4px solid #35183b; border-radius: 50%; font-size: 30px; box-shadow: 5px 5px 0 #b1781b; }
 .reward-card h2 { margin: 0; font-size: 38px; letter-spacing: -.04em; }
+.points-earned { display: inline-block; margin: 10px 0 0; padding: 5px 11px; color: white; background: #25133a; border-radius: 99px; font: 500 10px "DM Mono",monospace; text-transform: uppercase; }
 .reward-card blockquote { margin: 20px auto 12px; max-width: 410px; font-size: clamp(20px, 4vw, 27px); line-height: 1.3; font-weight: 900; }
 .reward-card blockquote::before { content: "\201C"; }
 .reward-card blockquote::after { content: "\201D"; }
@@ -170,11 +229,17 @@ footer { max-width: 1180px; margin: 0 auto; padding: 25px 30px 35px; display: fl
 @media (max-width: 940px) {
   .side-copy, .tip-card { display: none; }
   .game-section { min-height: 820px; }
+  .daily-bonus { grid-template-columns: 1fr; }
+  .claw-grid { grid-template-columns: repeat(3,1fr); }
 }
 @media (max-width: 640px) {
   .site-header, main { padding-left: 16px; padding-right: 16px; }
-  .status-pill { display: none; }
+  .brand > span:last-child { display: none; }
+  .stat-pill { padding: 8px 9px; font-size: 8px; }
   .intro { padding-top: 48px; }
+  .daily-bonus { padding: 24px 18px; margin-bottom: 65px; }
+  .daily-track { gap: 4px; overflow-x: auto; padding: 5px 0; }
+  .day-reward { min-width: 58px; min-height: 78px; }
   .machine-wrap { width: calc(100% + 16px); }
   .machine-body { margin-left: 7px; margin-right: 7px; padding-left: 12px; padding-right: 12px; }
   .controls-panel { margin-left: -12px; margin-right: -12px; padding: 16px 12px; grid-template-columns: 1fr 88px; }
@@ -185,6 +250,10 @@ footer { max-width: 1180px; margin: 0 auto; padding: 25px 30px 35px; display: fl
   .prize-slot { width: 160px; }
   .task-result { margin-top: -20px; margin-bottom: 80px; padding: 26px; grid-template-columns: auto 1fr; }
   .result-actions { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+  .claw-shelf { padding: 32px 20px; }
+  .shelf-heading { align-items: stretch; flex-direction: column; }
+  .shelf-wallet { align-self: flex-start; }
+  .claw-grid { grid-template-columns: 1fr 1fr; }
   .quote-collection { padding: 32px 20px; }
   .collection-heading { align-items: stretch; flex-direction: column; }
   .collection-progress { align-self: flex-start; }

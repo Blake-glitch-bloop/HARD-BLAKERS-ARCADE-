@@ -26,7 +26,10 @@
         <span class="brand-mark" aria-hidden="true">B</span>
         <span>Brandon's Arcade</span>
       </a>
-      <div class="status-pill"><span></span> Machine online</div>
+      <div class="header-stats">
+        <a class="stat-pill streak-pill" href="#daily"><span aria-hidden="true">◆</span><b id="streakCount">1</b> day streak</a>
+        <a class="stat-pill points-pill" href="#shelf"><span aria-hidden="true">●</span><b id="pointsBalance">0</b> points</a>
+      </div>
     </header>
 
     <main id="top">
@@ -38,6 +41,15 @@
           No overthinking. Just play, pick, and begin.
         </p>
         <a class="jump-link" href="#machine">Play the machine <span aria-hidden="true">↓</span></a>
+      </section>
+
+      <section class="daily-bonus" id="daily" aria-labelledby="daily-title">
+        <div class="daily-copy">
+          <div class="eyebrow"><span>◆</span> Daily bonus</div>
+          <h2 id="daily-title">Come back. Stack rewards.</h2>
+          <p id="dailyStatus">Today's reward has been collected. Return tomorrow to keep the streak alive.</p>
+        </div>
+        <div class="daily-track" id="dailyTrack" aria-label="Seven-day reward streak"></div>
       </section>
 
       <section class="game-section" id="machine" aria-label="Task claw machine">
@@ -55,6 +67,7 @@
           <div class="machine-body">
             <div class="game-info">
               <span>Prize bay</span>
+              <span id="activeClawLabel">Standard claw</span>
               <span class="plays"><b id="plays">0</b> tasks grabbed</span>
             </div>
 
@@ -107,14 +120,27 @@
         <div class="ticket-cut left"></div><div class="ticket-cut right"></div>
         <div class="result-icon">✓</div>
         <div class="result-copy">
-          <span>The claw has spoken</span>
+          <span id="taskOrder">The claw has spoken</span>
           <h2 id="chosenTask">Start the task</h2>
-          <p>One thing at a time. You've got this, Brandon.</p>
+          <div class="queued-task" id="queuedTask" hidden>Up next: <strong id="secondTask"></strong></div>
+          <p id="taskProgress">Complete it to earn 50 points.</p>
         </div>
         <div class="result-actions">
           <button id="doneBtn" class="primary-btn">Mark it done</button>
           <button id="againBtn" class="text-btn">Grab another ↻</button>
         </div>
+      </section>
+
+      <section class="claw-shelf" id="shelf" aria-labelledby="shelf-title">
+        <div class="shelf-heading">
+          <div>
+            <div class="eyebrow"><span>●</span> Claw shelf store</div>
+            <h2 id="shelf-title">Spend points. Switch your style.</h2>
+            <p>Finish tasks to earn 50 points each, then buy and equip new claws.</p>
+          </div>
+          <div class="shelf-wallet"><span>Your balance</span><strong><b id="shelfPoints">0</b>P</strong></div>
+        </div>
+        <div class="claw-grid" id="clawGrid"></div>
       </section>
 
       <section class="quote-collection" id="quoteCollection" aria-labelledby="quotes-title" hidden>
@@ -162,6 +188,7 @@
         <span class="reward-kicker">Task complete · Quote unlocked</span>
         <div class="reward-star" aria-hidden="true">★</div>
         <h2 id="rewardTitle">Prize earned!</h2>
+        <div class="points-earned">+50 points</div>
         <blockquote id="rewardQuote"></blockquote>
         <p id="rewardNumber"></p>
         <div class="reward-buttons">
